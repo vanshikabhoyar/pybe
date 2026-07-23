@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  AlertTriangle,
   Brain,
   ChartNoAxesCombined,
   Code2,
@@ -9,13 +8,10 @@ import {
   Lightbulb,
   MessageSquareText,
   Play,
-  RefreshCw,
   Route,
   Search,
   Send,
-  Sparkles,
-  Terminal,
-  Trash2
+  Sparkles
 } from 'lucide-react';
 import './styles.css';
 
@@ -42,28 +38,23 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const [logsData, setLogsData] = useState({ logs: '', logCount: 0 });
-
   const concepts = useMemo(() => [...new Set(scenarios.flatMap((scenario) => scenario.concepts || []))].sort(), [scenarios]);
 
   async function refresh() {
     const params = new URLSearchParams(Object.entries(filters).filter(([, value]) => value));
-    const [scenarioData, sessionData, analyticsData, roadmapData, logsRes] = await Promise.all([
+    const [scenarioData, sessionData, analyticsData, roadmapData] = await Promise.all([
       api(`/scenarios?${params}`),
       api('/sessions'),
       api('/analytics'),
-      api('/roadmap'),
-      api('/logs').catch(() => ({ logs: 'Error fetching logs.', logCount: 0 }))
+      api('/roadmap')
     ]);
     setScenarios(scenarioData);
     setSessions(sessionData);
     setAnalytics(analyticsData);
     setRoadmap(roadmapData);
-    if (logsRes) setLogsData(logsRes);
     setSelected((current) => current || scenarioData[0] || null);
     setLoading(false);
   }
-
 
   useEffect(() => {
     refresh().catch(console.error);
@@ -95,7 +86,7 @@ function App() {
           <Brain size={30} />
           <div>
             <strong>PyBe</strong>
-            <span>Scenario-first Python</span>
+            <span>Story-driven Python Learning</span>
           </div>
         </div>
 
@@ -104,7 +95,7 @@ function App() {
           <input
             value={filters.q}
             onChange={(event) => setFilters({ ...filters, q: event.target.value })}
-            placeholder="Search scenarios"
+            placeholder="Search story scenarios"
           />
         </label>
 
@@ -116,7 +107,7 @@ function App() {
         </select>
 
         <select value={filters.concept} onChange={(event) => setFilters({ ...filters, concept: event.target.value })}>
-          <option value="">All concepts</option>
+          <option value="">All Data Structures</option>
           {concepts.map((concept) => <option key={concept}>{concept}</option>)}
         </select>
 
@@ -141,11 +132,11 @@ function App() {
       <section className="workspace">
         <header className="hero">
           <div>
-            <p>AI-native learning journey</p>
-            <h1>Learn Python by reasoning through real situations first.</h1>
+            <p>Story-Based Python Mastery (Lists & Dictionaries)</p>
+            <h1>Learn Python Data Structures through Classic Folk Stories & Legends.</h1>
           </div>
           <div className="hero-stats">
-            <span>{analytics?.scenarioCount || 0}<small>Scenarios</small></span>
+            <span>{analytics?.scenarioCount || 0}<small>Stories</small></span>
             <span>{analytics?.sessionCount || 0}<small>Sessions</small></span>
             <span>{analytics?.averagePromptScore || 0}<small>Prompt score</small></span>
           </div>
@@ -176,7 +167,7 @@ function App() {
                 <textarea
                   value={form.promptText}
                   onChange={(event) => setForm({ ...form, promptText: event.target.value })}
-                  placeholder="Explain my approach step by step, then show the Python concept and code..."
+                  placeholder="Explain how Python Lists or Dictionaries solve this story scenario..."
                 />
               </label>
               <label>
@@ -184,7 +175,7 @@ function App() {
                 <textarea
                   value={form.reflection}
                   onChange={(event) => setForm({ ...form, reflection: event.target.value })}
-                  placeholder="What did you notice about your thinking?"
+                  placeholder="What did you notice about mapping story elements to Python Data Structures?"
                 />
               </label>
               <button className="primary" disabled={submitting}>
@@ -204,20 +195,16 @@ function App() {
 
         <section className="dashboard">
           <div className="panel">
-            <div className="section-title"><ChartNoAxesCombined size={20} /><h2>Learner Analytics</h2></div>
+            <div className="section-title"><ChartNoAxesCombined size={20} /><h2>Data Structure Mastery</h2></div>
             <Analytics analytics={analytics} />
           </div>
           <div className="panel">
-            <div className="section-title"><Route size={20} /><h2>Roadmap</h2></div>
+            <div className="section-title"><Route size={20} /><h2>Learning Path Roadmap</h2></div>
             <Roadmap roadmap={roadmap} />
           </div>
           <div className="panel">
             <div className="section-title"><MessageSquareText size={20} /><h2>Recent Sessions</h2></div>
             <SessionList sessions={sessions} />
-          </div>
-          <div className="panel logs-panel">
-            <div className="section-title"><Terminal size={20} /><h2>Backend Error Logs (app.log)</h2></div>
-            <LogsViewer logsData={logsData} onRefresh={refresh} />
           </div>
         </section>
       </section>
@@ -313,54 +300,4 @@ function SessionList({ sessions }) {
   );
 }
 
-function LogsViewer({ logsData, onRefresh }) {
-  const [triggering, setTriggering] = useState(false);
-  const [clearing, setClearing] = useState(false);
-
-  async function triggerTestError() {
-    setTriggering(true);
-    try {
-      await fetch('http://localhost:5000/api/trigger-error');
-    } catch (_e) {
-      // Expected 500 error
-    } finally {
-      setTriggering(false);
-      setTimeout(onRefresh, 300);
-    }
-  }
-
-  async function clearLogs() {
-    setClearing(true);
-    try {
-      await fetch('http://localhost:5000/api/logs', { method: 'DELETE' });
-    } catch (_e) {
-      // Handle error
-    } finally {
-      setClearing(false);
-      onRefresh();
-    }
-  }
-
-  return (
-    <div className="logs-viewer">
-      <div className="logs-actions">
-        <span className="log-badge">{logsData.logCount || 0} Error Events</span>
-        <button type="button" className="secondary-btn" onClick={triggerTestError} disabled={triggering}>
-          <AlertTriangle size={14} /> {triggering ? 'Triggering...' : 'Trigger Test Error'}
-        </button>
-        <button type="button" className="secondary-btn" onClick={onRefresh}>
-          <RefreshCw size={14} /> Refresh
-        </button>
-        <button type="button" className="secondary-btn danger-btn" onClick={clearLogs} disabled={clearing || !logsData.logCount}>
-          <Trash2 size={14} /> {clearing ? 'Clearing...' : 'Clear Logs'}
-        </button>
-      </div>
-      <div className="logs-terminal">
-        <pre>{logsData.logs || 'No app.log entries recorded yet. Click "Trigger Test Error" above to generate a log entry.'}</pre>
-      </div>
-    </div>
-  );
-}
-
 createRoot(document.getElementById('root')).render(<App />);
-
