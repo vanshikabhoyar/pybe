@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   Code2,
   Compass,
+  Eye,
   Key,
   Layers,
   Lightbulb,
@@ -97,7 +98,6 @@ function App() {
 
   if (loading) return <main className="loading">Loading PyBe...</main>;
 
-  // Render Dora's Interactive Story Quest Page
   if (viewMode === 'storyQuest') {
     return <DoraStoryQuestPage onBack={() => setViewMode('dashboard')} scenarios={scenarios} />;
   }
@@ -246,127 +246,186 @@ function App() {
 }
 
 /**
- * 🎒 True Interactive Dora the Explorer Story Walkthrough Simulation
+ * 🎒 Complete 9-Chapter Interactive Dora's Backpack Adventure Simulation
  */
 function DoraStoryQuestPage({ onBack }) {
-  // Quest Scenes Configuration
-  const questScenes = [
+  const chapters = [
     {
       step: 1,
-      title: 'Scene 1: The Adventure Begins with Dora & Boots!',
-      character: 'Dora & Boots',
+      chapterTitle: '🌟 Chapter 1 – An Empty Backpack',
+      character: 'Dora the Explorer',
       avatar: '/images/dora_backpack.jpg',
-      dialogue: '¡Hola! I am Dora, and this is Boots! We are starting our journey to Star Mountain. First, we need to create our empty Backpack list in Python!',
-      conceptTitle: 'Create Backpack List',
+      dialogue: 'One sunny morning, Dora wakes up excited for an adventure! "Oh no! My backpack is empty! I need your help to collect everything I\'ll need for this adventure." In Python, Dora\'s backpack is a List.',
+      conceptTitle: 'Creating a List',
       conceptCode: 'backpack = []',
       actionText: '🎒 Create Empty Backpack',
       actionType: 'create'
     },
     {
       step: 2,
-      title: 'Scene 2: Saying MAP! Adding Map to Backpack',
-      character: 'Boots the Monkey',
-      avatar: '/images/boots.jpg',
-      dialogue: 'Say MAP! Map tells us we need to cross Crocodile Lake. Let\'s put Map inside Backpack so we don\'t get lost!',
-      conceptTitle: 'Append Item to List',
+      chapterTitle: '🗺️ Chapter 2 – The Magical Map',
+      character: 'Dora the Explorer',
+      avatar: '/images/dora_backpack.jpg',
+      dialogue: 'Dora finds a magical map. She says: "The map will help us find the correct path!" Let\'s put it inside the backpack using append().',
+      conceptTitle: 'append() Method',
       conceptCode: 'backpack.append("Map")',
-      actionText: '🗺️ Put Map in Backpack',
+      actionText: '🗺️ Add Map (.append("Map"))',
       actionType: 'addMap'
     },
     {
       step: 3,
-      title: 'Scene 3: Finding the Golden Key on the Trail',
-      character: 'Dora the Explorer',
-      avatar: '/images/dora_backpack.jpg',
-      dialogue: 'Look! A Golden Key on the jungle trail! We\'ll need this key to unlock the Star Gate. Let\'s append it to our Backpack list!',
-      conceptTitle: 'Append Second Item',
+      chapterTitle: '🔑 Chapter 3 – The Golden Key',
+      character: 'Boots the Monkey',
+      avatar: '/images/boots.jpg',
+      dialogue: 'A locked gate appears. Boots shouts: "We need a key!" Dora finds a Golden Key. Add it to the backpack!',
+      conceptTitle: 'append() Second Item',
       conceptCode: 'backpack.append("Golden Key")',
-      actionText: '🔑 Put Golden Key in Backpack',
+      actionText: '🔑 Add Golden Key (.append("Golden Key"))',
       actionType: 'addKey'
     },
     {
       step: 4,
-      title: 'Scene 4: Swiper Snuck a Broken Torch Inside!',
-      character: 'Swiper the Fox',
+      chapterTitle: '🔦 Chapter 4 – The Broken Torch',
+      character: 'Dora & Swiper',
       avatar: '/images/swiper.jpg',
-      dialogue: 'Oh no! Swiper sneaked a Broken Torch into our backpack! Quick, let's use .remove("Broken Torch") to clean up our list!',
-      conceptTitle: 'Remove Item from List',
-      conceptCode: 'backpack.remove("Broken Torch")',
-      actionText: '🧹 Remove Broken Torch',
-      actionType: 'removeTorch'
+      dialogue: 'The cave is dark. Dora picks up a torch (backpack.append("Torch")). Unfortunately... the torch breaks! Dora says: "We don\'t need broken things." Remove it!',
+      conceptTitle: 'remove() Method',
+      conceptCode: 'backpack.remove("Torch")',
+      actionText: '🔦 Add & Remove Broken Torch',
+      actionType: 'handleTorch'
     },
     {
       step: 5,
-      title: 'Scene 5: Checking the First Item to Find Our Way',
+      chapterTitle: '🧭 Chapter 5 – The Magic Compass',
       character: 'Dora the Explorer',
       avatar: '/images/dora_backpack.jpg',
-      dialogue: 'We reached Crocodile Lake! Which item is FIRST in our backpack list? In Python, indexing starts at 0! Index [0] gives us Map!',
-      conceptTitle: 'Access Index [0]',
-      conceptCode: 'first_item = backpack[0]',
-      actionText: '🔍 Inspect backpack[0]',
-      actionType: 'inspectFirst'
+      dialogue: 'Inside the forest, Dora discovers a Magic Compass. She says: "The compass should always stay at the front so we can find our way." Insert it at index 0!',
+      conceptTitle: 'insert() Method',
+      conceptCode: 'backpack.insert(0, "Magic Compass")',
+      actionText: '🧭 Insert Compass at Index 0 (.insert(0, ...))',
+      actionType: 'insertCompass'
     },
     {
       step: 6,
-      title: 'Scene 6: Reaching Star Mountain & Counting Items!',
+      chapterTitle: '🎁 Chapter 6 – What\'s the First Item?',
+      character: 'Boots the Monkey',
+      avatar: '/images/boots.jpg',
+      dialogue: 'The journey becomes confusing. Boots asks: "What\'s the first thing inside our backpack?" Let\'s check using indexing backpack[0]!',
+      conceptTitle: 'List Indexing [0]',
+      conceptCode: 'first_item = backpack[0]',
+      actionText: '🔍 Check First Item (backpack[0])',
+      actionType: 'inspectFirst'
+    },
+    {
+      step: 7,
+      chapterTitle: '🎒 Chapter 7 – How Many Items Do We Have?',
+      character: 'Dora the Explorer',
+      avatar: '/images/dora_backpack.jpg',
+      dialogue: 'Before crossing the river, Dora checks whether she has enough supplies. Count everything using len(backpack)!',
+      conceptTitle: 'len() Function',
+      conceptCode: 'item_count = len(backpack)',
+      actionText: '🔢 Count Total Items (len(backpack))',
+      actionType: 'countItems'
+    },
+    {
+      step: 8,
+      chapterTitle: '👀 Chapter 8 – Check Every Item',
+      character: 'Swiper & Dora',
+      avatar: '/images/swiper.jpg',
+      dialogue: 'Swiper is nearby! Dora wants to make sure nothing is missing. Let\'s inspect every item one by one using a for loop!',
+      conceptTitle: 'Looping through a List',
+      conceptCode: 'for item in backpack:\n    print(item)',
+      actionText: '👀 Loop Through List (for item in backpack)',
+      actionType: 'loopItems'
+    },
+    {
+      step: 9,
+      chapterTitle: '⭐ Chapter 9 – Use the Last Item',
+      character: 'Boots the Monkey',
+      avatar: '/images/boots.jpg',
+      dialogue: 'The final door needs the last collected item! Take it out using pop()!',
+      conceptTitle: 'pop() Method',
+      conceptCode: 'last_item = backpack.pop()',
+      actionText: '⭐ Take Out Last Item (.pop())',
+      actionType: 'popItem'
+    },
+    {
+      step: 10,
+      chapterTitle: '🏆 Final Chapter – The Golden Star',
       character: 'Dora, Boots & Backpack',
       avatar: '/images/dora_backpack.jpg',
-      dialogue: '¡Lo hicimos! We did it! We reached Star Mountain! Let\'s use len(backpack) to count how many items helped us on our quest!',
-      conceptTitle: 'Count Total Items with len()',
-      conceptCode: 'total = len(backpack)',
-      actionText: '🏆 Count Items len(backpack)',
-      actionType: 'finish'
+      dialogue: 'Dora and Boots reach the hidden Golden Star! Dora smiles and says: "We couldn\'t have finished this adventure without organizing everything in our backpack. Just like my backpack helped us store and manage important items, Python Lists help programmers store and manage multiple pieces of data."',
+      conceptTitle: 'Mastery Achieved!',
+      conceptCode: 'print("¡Lo hicimos! We did it!")',
+      actionText: '🏆 Complete Quest!',
+      actionType: 'complete'
     }
   ];
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentChapter, setCurrentChapter] = useState(0);
   const [backpack, setBackpack] = useState([]);
   const [highlightFirst, setHighlightFirst] = useState(false);
+  const [poppedItem, setPoppedItem] = useState(null);
+  const [loopOutput, setLoopOutput] = useState([]);
+  const [isLooping, setIsLooping] = useState(false);
   const [questCompleted, setQuestCompleted] = useState(false);
 
-  const activeScene = questScenes[currentStep];
+  const activeChapter = chapters[currentChapter];
 
-  // Execute Step Action
-  function handleStepAction() {
-    const type = activeScene.actionType;
+  function runChapterAction() {
+    const type = activeChapter.actionType;
 
     if (type === 'create') {
       setBackpack([]);
+      setPoppedItem(null);
+      setLoopOutput([]);
     } else if (type === 'addMap') {
-      if (!backpack.includes('Map')) setBackpack([...backpack, 'Map']);
+      if (!backpack.includes('Map')) setBackpack((prev) => [...prev, 'Map']);
     } else if (type === 'addKey') {
-      if (!backpack.includes('Golden Key')) setBackpack([...backpack, 'Golden Key']);
-    } else if (type === 'removeTorch') {
-      setBackpack(backpack.filter((item) => item !== 'Broken Torch'));
+      if (!backpack.includes('Golden Key')) setBackpack((prev) => [...prev, 'Golden Key']);
+    } else if (type === 'handleTorch') {
+      // Simulate torch addition and immediate removal as per story
+      setBackpack((prev) => [...prev.filter((i) => i !== 'Torch')]);
+    } else if (type === 'insertCompass') {
+      if (!backpack.includes('Magic Compass')) {
+        setBackpack((prev) => ['Magic Compass', ...prev.filter((i) => i !== 'Magic Compass')]);
+      }
     } else if (type === 'inspectFirst') {
       setHighlightFirst(true);
       setTimeout(() => setHighlightFirst(false), 3000);
-    } else if (type === 'finish') {
+    } else if (type === 'countItems') {
+      // Show length highlight
+    } else if (type === 'loopItems') {
+      setIsLooping(true);
+      setLoopOutput(backpack);
+      setTimeout(() => setIsLooping(false), 2000);
+    } else if (type === 'popItem') {
+      if (backpack.length > 0) {
+        const last = backpack[backpack.length - 1];
+        setPoppedItem(last);
+        setBackpack((prev) => prev.slice(0, -1));
+      }
+    } else if (type === 'complete') {
       setQuestCompleted(true);
     }
 
-    if (currentStep < questScenes.length - 1) {
-      setCurrentStep(currentStep + 1);
+    if (currentChapter < chapters.length - 1) {
+      setCurrentChapter(currentChapter + 1);
     }
   }
 
-  // Helper to add Broken Torch in scene 4 for illustration
-  useEffect(() => {
-    if (activeScene.actionType === 'removeTorch' && !backpack.includes('Broken Torch')) {
-      setBackpack((prev) => [...prev, 'Broken Torch']);
-    }
-  }, [currentStep]);
-
-  function restartQuest() {
-    setCurrentStep(0);
+  function resetAdventure() {
+    setCurrentChapter(0);
     setBackpack([]);
-    setQuestCompleted(false);
     setHighlightFirst(false);
+    setPoppedItem(null);
+    setLoopOutput([]);
+    setQuestCompleted(false);
   }
 
   return (
     <div className="story-page-wrapper dora-theme-page">
-      {/* Top Cute Navbar */}
+      {/* Top Header Navbar */}
       <header className="story-nav dora-nav">
         <button type="button" className="back-btn" onClick={onBack}>
           <ArrowLeft size={20} />
@@ -374,65 +433,87 @@ function DoraStoryQuestPage({ onBack }) {
         </button>
         <div className="story-nav-title">
           <span className="backpack-emoji">🎒</span>
-          <h2>Dora's Backpack Python List Simulation</h2>
+          <h2>Dora's Backpack: Learn Python Lists Through a Story</h2>
         </div>
-        <button type="button" className="reset-quest-btn" onClick={restartQuest}>
-          <RotateCcw size={16} /> Restart Adventure
+        <button type="button" className="reset-quest-btn" onClick={resetAdventure}>
+          <RotateCcw size={16} /> Reset Story
         </button>
       </header>
 
-      {/* Quest Trail Progress Bar */}
+      {/* Chapters Horizontal Progress Bar */}
       <div className="quest-trail-bar">
-        {questScenes.map((scene, idx) => (
+        {chapters.map((ch, idx) => (
           <div
-            key={scene.step}
-            className={`trail-step ${idx === currentStep ? 'active' : ''} ${idx < currentStep ? 'completed' : ''}`}
-            onClick={() => setCurrentStep(idx)}
+            key={ch.step}
+            className={`trail-step ${idx === currentChapter ? 'active' : ''} ${idx < currentChapter ? 'completed' : ''}`}
+            onClick={() => setCurrentChapter(idx)}
           >
-            <span className="step-num">{idx < currentStep ? '✓' : scene.step}</span>
-            <span className="step-label">Step {scene.step}</span>
+            <span className="step-num">{idx < currentChapter ? '✓' : ch.step}</span>
+            <span className="step-label">Ch {ch.step}</span>
           </div>
         ))}
       </div>
 
-      {/* Interactive Story Simulation Grid */}
+      {/* Main Chapter Simulation Stage */}
       <div className="dora-simulation-main">
-        {/* Left Side: Interactive Character Dialogue & Story Scene */}
+        {/* Left Side: Chapter Dialogue & Story Action */}
         <section className="dora-story-stage">
           <div className="stage-scene-card">
             <div className="character-avatar-wrap">
-              <img src={activeScene.avatar} alt={activeScene.character} className="character-avatar-img" />
-              <span className="char-name-tag">{activeScene.character}</span>
+              <img src={activeChapter.avatar} alt={activeChapter.character} className="character-avatar-img" />
+              <span className="char-name-tag">{activeChapter.character}</span>
             </div>
 
             <div className="dialogue-speech-bubble">
               <div className="bubble-header">
                 <Volume2 size={18} color="#ffd166" />
-                <strong>{activeScene.title}</strong>
+                <strong>{activeChapter.chapterTitle}</strong>
               </div>
-              <p className="dialogue-text">"{activeScene.dialogue}"</p>
+              <p className="dialogue-text">"{activeChapter.dialogue}"</p>
             </div>
           </div>
 
-          {/* Interactive Quest Action Button */}
+          {/* Action Execution Button */}
           <div className="quest-action-box">
-            <button type="button" className="hero-action-btn" onClick={handleStepAction}>
-              <Zap size={20} /> {activeScene.actionText}
+            <button type="button" className="hero-action-btn" onClick={runChapterAction}>
+              <Zap size={20} /> {activeChapter.actionText}
             </button>
-            <p className="action-hint">Click button above to advance the story and run the Python code!</p>
+            <p className="action-hint">Click button to execute the Python list command for this chapter!</p>
           </div>
 
-          {/* Python Concept Card for Current Scene */}
+          {/* Concept Code Box */}
           <div className="scene-concept-banner">
             <div className="concept-title">
               <Code2 size={20} color="#06d6a0" />
-              <h3>{activeScene.conceptTitle}</h3>
+              <h3>Concept Learned: {activeChapter.conceptTitle}</h3>
             </div>
-            <code className="highlight-code">{activeScene.conceptCode}</code>
+            <pre className="highlight-code-block">{activeChapter.conceptCode}</pre>
           </div>
+
+          {/* Popped Item / Loop Output Notice */}
+          {poppedItem && (
+            <div className="output-notice-box">
+              <Sparkles size={18} color="#ffd166" />
+              <span><strong>.pop() Output:</strong> "{poppedItem}" (removed from last position)</span>
+            </div>
+          )}
+
+          {loopOutput.length > 0 && (
+            <div className="output-notice-box">
+              <Eye size={18} color="#06d6a0" />
+              <div>
+                <strong>For Loop Print Output:</strong>
+                <div className="loop-printed-list">
+                  {loopOutput.map((item, i) => (
+                    <span key={i} className="print-line">> print("{item}")</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
-        {/* Right Side: Animated Backpack Visualizer & Code Terminal */}
+        {/* Right Side: Visual Backpack & Live Python Code Trace */}
         <section className="dora-backpack-visualizer">
           {/* Animated Backpack Container */}
           <div className="backpack-container-card">
@@ -475,18 +556,19 @@ function DoraStoryQuestPage({ onBack }) {
           {/* Real-time Python Code Execution Terminal */}
           <div className="python-execution-terminal">
             <div className="terminal-bar">
-              <TerminalIcon size={16} color="#a3e635" />
-              <span>Python Execution Terminal</span>
+              <Code2 size={16} color="#a3e635" />
+              <span>Live Python Execution Terminal</span>
             </div>
             <pre className="terminal-code">
-{`# Python List Execution Trace
+{`# Python List Execution Trace - ${activeChapter.chapterTitle}
 backpack = [${backpack.map((i) => `"${i}"`).join(', ')}]
 
 # Current Operations:
-# Total items: len(backpack) -> ${backpack.length}
-# First item: backpack[0] -> "${backpack[0] || 'None'}"
+# 1. Total items count: len(backpack) -> ${backpack.length}
+# 2. First item: backpack[0] -> "${backpack[0] || 'None'}"
+# 3. Last item: backpack[-1] -> "${backpack[backpack.length - 1] || 'None'}"
 
-print("Dora's Backpack Contents:", backpack)`}
+print("Dora's Backpack:", backpack)`}
             </pre>
           </div>
 
@@ -495,8 +577,8 @@ print("Dora's Backpack Contents:", backpack)`}
             <div className="victory-celebration-card">
               <Trophy size={36} color="#ffd166" />
               <div>
-                <h3>¡Lo Hicimos! We Did It!</h3>
-                <p>You mastered Python Lists with Dora's Backpack! 🎒⭐</p>
+                <h3>¡Lo Hicimos! We Did It! ⭐</h3>
+                <p>"Python Lists help programmers store and manage multiple pieces of data seamlessly!"</p>
               </div>
             </div>
           )}
@@ -504,10 +586,6 @@ print("Dora's Backpack Contents:", backpack)`}
       </div>
     </div>
   );
-}
-
-function TerminalIcon({ size, color }) {
-  return <Code2 size={size} color={color} />;
 }
 
 function EmptyResult() {
