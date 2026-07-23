@@ -2,25 +2,45 @@ const { resetData } = require('./data/store');
 require('dotenv').config();
 
 const scenarios = [
-  // 🗝️ Ali Baba and 40 Thieves (Ali Baba & 40 Chor)
+  // 🎒 Dora the Explorer's Backpack ⭐⭐⭐⭐⭐ (Flagship Python Lists Scenario)
   {
-    title: 'Ali Baba & The 40 Thieves: Secret Treasure Register',
+    title: "🎒 Dora the Explorer's Backpack Adventure",
     difficulty: 'Beginner',
     concepts: ['lists'],
-    context: 'Ali Baba finds a hidden cave in the forest filled with chest after chest of gold coins and jewels left behind by the 40 thieves. He needs a way to keep an ordered list of all stolen treasure items discovered inside the cave.',
+    context: 'Dora is going on a jungle adventure with Boots! Every time she finds a useful item (like a Map or a Golden Key), she packs it into her friendly singing Backpack. The Backpack is represented as a Python List.',
+    prompt: 'How would you use Python List operations (append, remove, indexing, len) to manage items in Dora\'s Backpack?',
+    objectives: [
+      'Create an empty list: backpack = []',
+      'Add items using .append("Map")',
+      'Remove unwanted items using .remove("Broken Torch")',
+      'Access the first item using index [0]',
+      'Count total items using len(backpack)'
+    ],
+    sampleReasoning: 'A Python List preserves order. I can create backpack = [], add items with .append(), remove items with .remove(), and inspect contents with indexing and len().',
+    effectivenessScore: 99
+  },
+
+  // 🗝️ Ali Baba and 40 Thieves
+  {
+    title: 'Ali Baba & The 40 Thieves: Treasure Register',
+    difficulty: 'Beginner',
+    concepts: ['lists'],
+    context: 'Ali Baba finds a hidden cave filled with treasures left behind by the 40 thieves. He uses a Python List to store the order of treasures discovered inside.',
     prompt: 'How would you use a Python List to store the order of treasures found inside the secret cave?',
-    objectives: ['Store multiple items in an ordered sequence', 'Use bracket notation [] for lists', 'Append new treasures as they are discovered'],
-    sampleReasoning: 'I will store all treasure item names inside a single Python List, using list.append() to add each new treasure chest.',
+    objectives: ['Store multiple items in an ordered sequence', 'Use bracket notation []', 'Append new treasures'],
+    sampleReasoning: 'I will store all treasure item names inside a single Python List, using list.append() to add each new treasure.',
     effectivenessScore: 98
   },
+
+  // 🗝️ Ali Baba & Secret Passwords
   {
     title: 'Ali Baba & The Secret Passwords',
     difficulty: 'Explorer',
     concepts: ['dictionaries'],
-    context: 'The magic door of the 40 Thieves only opens when you speak the exact matching magical command phrase. Ali Baba wants to store key magic locations and their corresponding secret password phrases.',
-    prompt: 'How would a Python Dictionary help Ali Baba map location names (keys) to their secret password phrases (values)?',
-    objectives: ['Understand Key-Value pairs', 'Use curly braces {} for dictionaries', 'Lookup passwords by location key'],
-    sampleReasoning: 'A Python Dictionary lets me pair key names like "Cave Door" directly with values like "Open Sesame" for instant lookup.',
+    context: 'The magic cave door only opens when you speak the exact matching magical command. Ali Baba maps location keys to secret password values.',
+    prompt: 'How would a Python Dictionary help Ali Baba map location names (keys) to secret passwords (values)?',
+    objectives: ['Understand Key-Value pairs', 'Use curly braces {}', 'Lookup passwords by key'],
+    sampleReasoning: 'A Python Dictionary lets me pair key names like "Cave Door" directly with values like "Open Sesame".',
     effectivenessScore: 97
   },
 
@@ -29,10 +49,10 @@ const scenarios = [
     title: 'Panchatantra: The Thirsty Crow & Pebble Collection',
     difficulty: 'Beginner',
     concepts: ['lists'],
-    context: 'A thirsty crow finds a pitcher with water at the bottom, but cannot reach it. The crow decides to collect pebbles from the ground one by one and drop them into the pitcher until the water rises.',
-    prompt: 'How would you represent the pebbles collected in a Python List and check how many pebbles have been added?',
-    objectives: ['Initialize an empty list', 'Add items using .append()', 'Check total pebble count using len()'],
-    sampleReasoning: 'I will start with an empty list pebbles = [] and append each pebble collected. Using len(pebbles) will tell us if enough water raised.',
+    context: 'A thirsty crow drops pebbles one by one into a water pitcher until the water level rises to the top.',
+    prompt: 'How would you represent pebbles collected in a Python List and count them?',
+    objectives: ['Initialize an empty list', 'Add items using .append()', 'Check size using len()'],
+    sampleReasoning: 'Start with pebbles = [] and append each pebble collected, checking len(pebbles).',
     effectivenessScore: 96
   },
 
@@ -41,41 +61,29 @@ const scenarios = [
     title: 'Panchatantra: The Tortoise & Hare Race Checkpoints',
     difficulty: 'Beginner',
     concepts: ['lists'],
-    context: 'During the famous forest race, the judge monkey marks down each checkpoint the steady tortoise reaches in sequential order from Start to Finish line.',
-    prompt: 'How can a Python List store the race checkpoints in order and find out which checkpoint the tortoise is currently at?',
-    objectives: ['Access list elements by index', 'Understand 0-based indexing', 'Track sequential progress in lists'],
-    sampleReasoning: 'A Python List preserves the exact order of race checkpoints. Using checkpoints[0] gives the start line and checkpoints[-1] gives the finish line.',
+    context: 'The judge marks down each race checkpoint the steady tortoise reaches in sequential order from Start to Finish line.',
+    prompt: 'How can a Python List store race checkpoints in order and find out which checkpoint the tortoise is at?',
+    objectives: ['Access list elements by index', 'Understand 0-based indexing', 'Track sequential progress'],
+    sampleReasoning: 'A Python List preserves the exact order. checkpoints[0] is Start Line and checkpoints[-1] is Finish Line.',
     effectivenessScore: 95
   },
 
-  // 🧠 Tenali Rama & King Krishnadevaraya's Clues
+  // 🧠 Tenali Rama & Royal Vault
   {
     title: 'Tenali Rama: Royal Palace Inventory Map',
     difficulty: 'Explorer',
     concepts: ['dictionaries'],
-    context: 'King Krishnadevaraya asks Tenali Rama to audit the royal vault. Tenali Rama needs a data structure where each room name is mapped to the count of gold vessels stored inside that room.',
-    prompt: 'Why is a Python Dictionary better than a simple list when searching for item counts by room name?',
-    objectives: ['Assign counts to unique keys', 'Update values associated with keys', 'Retrieve values instantly without searching line by line'],
-    sampleReasoning: 'A Python Dictionary allows instant lookup vault["Treasury Room"] to get the exact count of gold vessels without looping through everything.',
+    context: 'Tenali Rama audits the royal vault, mapping each room name key to the count of gold vessels stored inside.',
+    prompt: 'Why is a Python Dictionary better than a list when searching for item counts by room name?',
+    objectives: ['Assign counts to unique keys', 'Update values associated with keys', 'Instant lookup without searching'],
+    sampleReasoning: 'A Python Dictionary allows instant lookup vault["Treasury Room"] to get exact counts.',
     effectivenessScore: 94
-  },
-
-  // 🍲 Akshaya Patra Legend
-  {
-    title: 'Akshaya Patra: The Infinite Feast Container',
-    difficulty: 'Builder',
-    concepts: ['lists', 'dictionaries'],
-    context: 'The legendary vessel Akshaya Patra yields endless varieties of food during a feast. The royal chef wants to maintain a list of menu items and a dictionary mapping each dish to its spice rating.',
-    prompt: 'How can you combine a Python List of menu items with a Python Dictionary of dish attributes?',
-    objectives: ['Combine Lists and Dictionaries', 'Store complex attributes in dictionaries', 'Iterate over list of dishes'],
-    sampleReasoning: 'I will keep a list of dish names and use a dictionary menu_spices = {"Kheer": "Sweet", "Curry": "Spicy"} to store their details.',
-    effectivenessScore: 93
   }
 ];
 
 function seed() {
   resetData(scenarios);
-  console.log(`Seeded ${scenarios.length} story-driven Python Data Structure scenarios (Ali Baba, Panchatantra, Tenali Rama)`);
+  console.log(`Seeded ${scenarios.length} story scenarios including Dora's Backpack!`);
 }
 
 if (require.main === module) {

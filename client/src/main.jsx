@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
+  ArrowLeft,
   BookOpen,
   Brain,
   ChartNoAxesCombined,
@@ -10,7 +11,9 @@ import {
   Key,
   Layers,
   Lightbulb,
+  Map,
   MessageSquareText,
+  Package,
   Play,
   Plus,
   RotateCcw,
@@ -20,8 +23,7 @@ import {
   Sparkles,
   Star,
   Trash2,
-  Trophy,
-  ArrowLeft
+  Trophy
 } from 'lucide-react';
 import './styles.css';
 
@@ -48,7 +50,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   
-  // Navigation State: 'dashboard' or 'storyQuest'
+  // View mode: 'dashboard' or 'storyQuest'
   const [viewMode, setViewMode] = useState('dashboard');
 
   const concepts = useMemo(() => [...new Set(scenarios.flatMap((scenario) => scenario.concepts || []))].sort(), [scenarios]);
@@ -92,7 +94,6 @@ function App() {
 
   if (loading) return <main className="loading">Loading PyBe...</main>;
 
-  // Render Cute Interactive Story Quest Page if activated
   if (viewMode === 'storyQuest') {
     return <StoryQuestPage onBack={() => setViewMode('dashboard')} scenarios={scenarios} />;
   }
@@ -108,7 +109,6 @@ function App() {
           </div>
         </div>
 
-        {/* Cute Navigation Button to Open Story Quest Page */}
         <button 
           type="button" 
           className="story-quest-trigger-btn"
@@ -116,7 +116,7 @@ function App() {
         >
           <Sparkles size={18} />
           <span>Interactive Story Quest</span>
-          <small className="badge-new">NEW PAGE ✨</small>
+          <small className="badge-new">Dora Page ✨</small>
         </button>
 
         <label className="search">
@@ -242,10 +242,19 @@ function App() {
 }
 
 /**
- * 🌟 Brand New Interactive Cute Story Quest Page Component
+ * 🎒 Brand New Cute Interactive Story Quest Page featuring Dora's Backpack
  */
-function StoryQuestPage({ onBack, scenarios }) {
+function StoryQuestPage({ onBack }) {
   const storyList = [
+    {
+      id: 'dora_backpack',
+      title: "🎒 Dora the Explorer's Backpack Adventure",
+      category: 'Python List (Mastery)',
+      icon: '🎒',
+      image: '/images/dora_backpack.jpg',
+      moral: 'Dora puts items into her Backpack! A Python List stores items in order, allows appending, removing, indexing [0], and len() counting.',
+      dsType: 'dora'
+    },
     {
       id: 'alibaba_treasure',
       title: 'Ali Baba & 40 Thieves: Secret Cave List',
@@ -254,8 +263,7 @@ function StoryQuestPage({ onBack, scenarios }) {
       image: '/images/ali_baba.jpg',
       moral: 'Order matters! Just like storing treasures sequentially inside a cave, a Python List keeps items in exact order.',
       dsType: 'list',
-      initialItems: ['Gold Coins', 'Ruby Necklace', 'Diamond Crown'],
-      newItemPlaceholder: 'e.g. Silver Lamp'
+      initialItems: ['Gold Coins', 'Ruby Necklace', 'Diamond Crown']
     },
     {
       id: 'alibaba_passwords',
@@ -278,8 +286,7 @@ function StoryQuestPage({ onBack, scenarios }) {
       image: '/images/thirsty_crow.jpg',
       moral: 'One by one! The crow adds pebbles using .append() to raise the water level dynamically.',
       dsType: 'list',
-      initialItems: ['Red Pebble', 'Blue Pebble', 'Shiny Pebble'],
-      newItemPlaceholder: 'e.g. Smooth Pebble'
+      initialItems: ['Red Pebble', 'Blue Pebble', 'Shiny Pebble']
     },
     {
       id: 'tortoise_hare',
@@ -289,67 +296,72 @@ function StoryQuestPage({ onBack, scenarios }) {
       image: '/images/tortoise_hare.jpg',
       moral: 'Index 0 to Finish! Access any checkpoint instantly using Python list indexing [0] or [-1].',
       dsType: 'list',
-      initialItems: ['Start Line', 'Big Banyan Tree', 'River Bridge', 'Finish Line'],
-      newItemPlaceholder: 'e.g. Mango Grove'
-    },
-    {
-      id: 'tenali_rama',
-      title: 'Tenali Rama: Royal Vault Map',
-      category: 'Python Dictionary (Key-Value)',
-      icon: '🧠',
-      image: '/images/tenali_rama.jpg',
-      moral: 'No endless searching! Tenali Rama looks up item counts directly by Room Name in a Dictionary.',
-      dsType: 'dict',
-      initialPairs: [
-        { key: 'Treasury Room', value: '500 Gold Vessels' },
-        { key: 'Jewel Tower', value: '120 Emerald Rings' }
-      ]
+      initialItems: ['Start Line', 'Big Banyan Tree', 'River Bridge', 'Finish Line']
     }
   ];
 
   const [activeStory, setActiveStory] = useState(storyList[0]);
+
+  // Dora Backpack State
+  const [backpack, setBackpack] = useState(['Map', 'Golden Key', 'Broken Torch', 'Compass']);
+  const [highlightFirst, setHighlightFirst] = useState(false);
+  const [customItem, setCustomItem] = useState('');
+
+  // Other List/Dict States
   const [listItems, setListItems] = useState(activeStory.initialItems || []);
   const [dictPairs, setDictPairs] = useState(activeStory.initialPairs || []);
   const [newItemText, setNewItemText] = useState('');
   const [newKeyText, setNewKeyText] = useState('');
   const [newValueText, setNewValueText] = useState('');
 
-  // Switch story selection
   function selectStory(story) {
     setActiveStory(story);
     if (story.dsType === 'list') {
       setListItems(story.initialItems || []);
-    } else {
+    } else if (story.dsType === 'dict') {
       setDictPairs(story.initialPairs || []);
     }
   }
 
-  // Interactive List operations
-  function addListItem() {
-    if (!newItemText.trim()) return;
-    setListItems([...listItems, newItemText.trim()]);
-    setNewItemText('');
+  // Dora Backpack Handlers
+  function createBackpack() {
+    setBackpack([]);
+    setHighlightFirst(false);
   }
 
-  function removeListItem(index) {
-    setListItems(listItems.filter((_, i) => i !== index));
+  function addMap() {
+    setBackpack([...backpack, 'Map']);
   }
 
-  // Interactive Dict operations
-  function addDictPair() {
-    if (!newKeyText.trim() || !newValueText.trim()) return;
-    setDictPairs([...dictPairs, { key: newKeyText.trim(), value: newValueText.trim() }]);
-    setNewKeyText('');
-    setNewValueText('');
+  function addKey() {
+    setBackpack([...backpack, 'Golden Key']);
   }
 
-  function removeDictPair(index) {
-    setDictPairs(dictPairs.filter((_, i) => i !== index));
+  function addBrokenTorch() {
+    setBackpack([...backpack, 'Broken Torch']);
+  }
+
+  function addCustomItem() {
+    if (!customItem.trim()) return;
+    setBackpack([...backpack, customItem.trim()]);
+    setCustomItem('');
+  }
+
+  function removeBrokenTorch() {
+    setBackpack(backpack.filter((item) => item !== 'Broken Torch'));
+  }
+
+  function removeSpecificItem(idx) {
+    setBackpack(backpack.filter((_, i) => i !== idx));
+  }
+
+  function checkFirstItem() {
+    setHighlightFirst(true);
+    setTimeout(() => setHighlightFirst(false), 3000);
   }
 
   return (
     <div className="story-page-wrapper">
-      {/* Top Cute Navbar */}
       <header className="story-nav">
         <button type="button" className="back-btn" onClick={onBack}>
           <ArrowLeft size={20} />
@@ -357,19 +369,18 @@ function StoryQuestPage({ onBack, scenarios }) {
         </button>
         <div className="story-nav-title">
           <BookOpen size={24} color="#ffd166" />
-          <h2>Folk Story Quest Mode ✨</h2>
+          <h2>Story Quest: Dora's Backpack & Python Lists ✨</h2>
         </div>
         <div className="cute-badge">
           <Star size={16} fill="#ffd166" color="#ffd166" />
-          <span>Interactive Story Reader</span>
+          <span>Dora's Adventure Page</span>
         </div>
       </header>
 
-      {/* Main Story Interactive Container */}
       <div className="story-content-grid">
-        {/* Left Side: Cute Story Carousel & Selector */}
+        {/* Story Selector Sidebar */}
         <aside className="story-selector-sidebar">
-          <h3>📖 Select a Story Legend</h3>
+          <h3>🎒 Story Quest Collection</h3>
           <div className="story-cards-stack">
             {storyList.map((story) => (
               <div
@@ -387,120 +398,230 @@ function StoryQuestPage({ onBack, scenarios }) {
           </div>
         </aside>
 
-        {/* Right Side: Interactive Story Reader & Live Code Playground */}
+        {/* Interactive Viewer */}
         <section className="story-interactive-viewer">
           <div className="story-hero-banner">
             <img src={activeStory.image} alt={activeStory.title} className="story-hero-img" />
             <div className="story-banner-overlay">
               <span className="cute-hero-pill">{activeStory.category}</span>
               <h1>{activeStory.title}</h1>
-              <p className="moral-quote">💡 <strong>Story Moral:</strong> {activeStory.moral}</p>
+              <p className="moral-quote">💡 <strong>Learning Focus:</strong> {activeStory.moral}</p>
             </div>
           </div>
 
-          {/* Interactive Visual Data Structure Simulator */}
-          <div className="ds-simulator-panel">
-            <div className="simulator-header">
-              <Sparkles size={20} color="#ffd166" />
-              <h3>Interactive Python {activeStory.dsType === 'list' ? 'List' : 'Dictionary'} Builder</h3>
+          {/* DORA'S BACKPACK SPECIAL SIMULATOR */}
+          {activeStory.dsType === 'dora' ? (
+            <div className="dora-simulator-panel">
+              <div className="simulator-header">
+                <Package size={24} color="#ffd166" />
+                <h3>🎒 Dora's Backpack Interactive Python List Simulator</h3>
+              </div>
+
+              {/* Action Buttons Bar */}
+              <div className="dora-actions-grid">
+                <button type="button" className="dora-btn reset-btn" onClick={createBackpack}>
+                  <RotateCcw size={16} /> 1. Create Empty Backpack (backpack = [])
+                </button>
+                <button type="button" className="dora-btn map-btn" onClick={addMap}>
+                  <Map size={16} /> 2. Add Map (.append("Map"))
+                </button>
+                <button type="button" className="dora-btn key-btn" onClick={addKey}>
+                  <Key size={16} /> 3. Add Golden Key (.append("Golden Key"))
+                </button>
+                <button type="button" className="dora-btn torch-btn" onClick={addBrokenTorch}>
+                  <Plus size={16} /> Add Broken Torch
+                </button>
+                <button type="button" className="dora-btn remove-btn" onClick={removeBrokenTorch}>
+                  <Trash2 size={16} /> 4. Remove Broken Torch (.remove("Broken Torch"))
+                </button>
+                <button type="button" className="dora-btn inspect-btn" onClick={checkFirstItem}>
+                  <Sparkles size={16} /> 5. Check First Item (backpack[0])
+                </button>
+              </div>
+
+              {/* Custom Add Row */}
+              <div className="dora-custom-input">
+                <input
+                  type="text"
+                  value={customItem}
+                  onChange={(e) => setCustomItem(e.target.value)}
+                  placeholder="Put any new item into Backpack (e.g. Telescope, Banana)..."
+                />
+                <button type="button" className="dora-add-custom-btn" onClick={addCustomItem}>
+                  <Plus size={16} /> Put in Backpack
+                </button>
+              </div>
+
+              {/* Cute Visual Backpack Display */}
+              <div className="backpack-visual-box">
+                <div className="backpack-visual-header">
+                  <div className="backpack-icon-title">
+                    <span className="big-backpack-emoji">🎒</span>
+                    <div>
+                      <strong>Dora's Backpack Contents</strong>
+                      <span>Python List View</span>
+                    </div>
+                  </div>
+                  <div className="backpack-count-badge">
+                    <span className="count-num">{backpack.length}</span>
+                    <small>Items (len(backpack))</small>
+                  </div>
+                </div>
+
+                <div className="backpack-items-flex">
+                  {backpack.length === 0 ? (
+                    <p className="empty-backpack-msg">Backpack is empty! Click the buttons above to add items.</p>
+                  ) : (
+                    backpack.map((item, idx) => (
+                      <div 
+                        key={idx} 
+                        className={idx === 0 && highlightFirst ? 'backpack-item-chip highlighted' : 'backpack-item-chip'}
+                      >
+                        <span className="chip-index">Index [{idx}]</span>
+                        <span className="chip-name">{item}</span>
+                        <button type="button" className="chip-del" onClick={() => removeSpecificItem(idx)}>
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Live Generated Python Code Box */}
+              <div className="python-code-box">
+                <div className="code-header">
+                  <Code2 size={18} color="#06d6a0" />
+                  <strong>Live Python Code Execution</strong>
+                </div>
+                <pre>
+{`# 1. Create Dora's Backpack list
+backpack = [${backpack.map(i => `"${i}"`).join(', ')}]
+
+# 2. Count total items inside backpack
+total_items = len(backpack)  # Returns ${backpack.length}
+
+# 3. Check the first item in backpack
+first_item = backpack[0] if backpack else None  # Returns "${backpack[0] || 'None'}"
+
+# 4. Display all items
+print("Dora's Backpack:", backpack)`}
+                </pre>
+              </div>
+
+              {/* Educational Python Concepts Cards */}
+              <div className="python-concepts-cards-grid">
+                <div className="concept-card">
+                  <span className="card-num">1</span>
+                  <h4>Create Backpack</h4>
+                  <code>backpack = []</code>
+                  <p>Creates a brand new empty list to hold items in order.</p>
+                </div>
+                <div className="concept-card">
+                  <span className="card-num">2</span>
+                  <h4>Add Items (.append)</h4>
+                  <code>backpack.append("Map")</code>
+                  <p>Puts a new item at the very end of the list.</p>
+                </div>
+                <div className="concept-card">
+                  <span className="card-num">3</span>
+                  <h4>Remove Items (.remove)</h4>
+                  <code>backpack.remove("Broken Torch")</code>
+                  <p>Finds and removes a specific unwanted item from the list.</p>
+                </div>
+                <div className="concept-card">
+                  <span className="card-num">4</span>
+                  <h4>Check First Item ([0])</h4>
+                  <code>first = backpack[0]</code>
+                  <p>In Python, indexing starts at 0! Index [0] accesses the first item.</p>
+                </div>
+                <div className="concept-card">
+                  <span className="card-num">5</span>
+                  <h4>Count Items (len)</h4>
+                  <code>count = len(backpack)</code>
+                  <p>Counts how many total items are stored inside the backpack.</p>
+                </div>
+              </div>
             </div>
-
-            {activeStory.dsType === 'list' ? (
-              <div className="list-simulator">
-                <p>Click below to dynamically <code>.append()</code> items into your Python List!</p>
-                <div className="input-row">
-                  <input
-                    type="text"
-                    value={newItemText}
-                    onChange={(e) => setNewItemText(e.target.value)}
-                    placeholder={activeStory.newItemPlaceholder || 'Add new item'}
-                  />
-                  <button type="button" className="add-btn" onClick={addListItem}>
-                    <Plus size={16} /> Append to List
-                  </button>
-                </div>
-
-                <div className="visual-list-container">
-                  <strong>my_story_list = [</strong>
-                  <div className="list-items-row">
-                    {listItems.map((item, idx) => (
-                      <div key={idx} className="list-box-item">
-                        <span className="idx-badge">Index [{idx}]</span>
-                        <span className="item-val">"{item}"</span>
-                        <button type="button" className="remove-item-btn" onClick={() => removeListItem(idx)}>
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                  <strong>]</strong>
-                </div>
-
-                <div className="python-code-box">
-                  <Code2 size={18} color="#06d6a0" />
-                  <pre>
-{`# Generated Python Code for this Story
-my_story_list = [${listItems.map(i => `"${i}"`).join(', ')}]
-
-print("Total elements in list:", len(my_story_list))
-print("First item:", my_story_list[0])`}
-                  </pre>
-                </div>
+          ) : (
+            /* General List/Dict Simulator for other stories */
+            <div className="ds-simulator-panel">
+              <div className="simulator-header">
+                <Sparkles size={20} color="#ffd166" />
+                <h3>Interactive Python {activeStory.dsType === 'list' ? 'List' : 'Dictionary'} Builder</h3>
               </div>
-            ) : (
-              <div className="dict-simulator">
-                <p>Click below to map <code>Key ➔ Value</code> pairs in your Python Dictionary!</p>
-                <div className="input-row">
-                  <input
-                    type="text"
-                    value={newKeyText}
-                    onChange={(e) => setNewKeyText(e.target.value)}
-                    placeholder="Key (e.g. Room / Door)"
-                  />
-                  <input
-                    type="text"
-                    value={newValueText}
-                    onChange={(e) => setNewValueText(e.target.value)}
-                    placeholder="Value (e.g. Password / Count)"
-                  />
-                  <button type="button" className="add-btn" onClick={addDictPair}>
-                    <Plus size={16} /> Add Key-Value
-                  </button>
-                </div>
 
-                <div className="visual-dict-container">
-                  <strong>my_story_dict = &#123;</strong>
-                  <div className="dict-pairs-grid">
-                    {dictPairs.map((pair, idx) => (
-                      <div key={idx} className="dict-card-pair">
-                        <div className="key-part">🔑 <strong>"{pair.key}"</strong></div>
-                        <div className="arrow-part">➔</div>
-                        <div className="val-part">💬 "{pair.value}"</div>
-                        <button type="button" className="remove-item-btn" onClick={() => removeDictPair(idx)}>
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    ))}
+              {activeStory.dsType === 'list' ? (
+                <div className="list-simulator">
+                  <div className="input-row">
+                    <input
+                      type="text"
+                      value={newItemText}
+                      onChange={(e) => setNewItemText(e.target.value)}
+                      placeholder="Add new item to list..."
+                    />
+                    <button type="button" className="add-btn" onClick={() => {
+                      if (!newItemText.trim()) return;
+                      setListItems([...listItems, newItemText.trim()]);
+                      setNewItemText('');
+                    }}>
+                      <Plus size={16} /> Append
+                    </button>
                   </div>
-                  <strong>&#125;</strong>
+                  <div className="visual-list-container">
+                    <strong>my_list = [</strong>
+                    <div className="list-items-row">
+                      {listItems.map((item, idx) => (
+                        <div key={idx} className="list-box-item">
+                          <span className="idx-badge">Index [{idx}]</span>
+                          <span className="item-val">"{item}"</span>
+                        </div>
+                      ))}
+                    </div>
+                    <strong>]</strong>
+                  </div>
                 </div>
-
-                <div className="python-code-box">
-                  <Code2 size={18} color="#06d6a0" />
-                  <pre>
-{`# Generated Python Code for this Story
-my_story_dict = {
-${dictPairs.map(p => `    "${p.key}": "${p.value}"`).join(',\n')}
-}
-
-# Fast Key Lookup example
-first_key = "${dictPairs[0]?.key || 'Cave Door'}"
-print("Lookup Value:", my_story_dict[first_key])`}
-                  </pre>
+              ) : (
+                <div className="dict-simulator">
+                  <div className="input-row">
+                    <input
+                      type="text"
+                      value={newKeyText}
+                      onChange={(e) => setNewKeyText(e.target.value)}
+                      placeholder="Key (e.g. Door)"
+                    />
+                    <input
+                      type="text"
+                      value={newValueText}
+                      onChange={(e) => setNewValueText(e.target.value)}
+                      placeholder="Value (e.g. Password)"
+                    />
+                    <button type="button" className="add-btn" onClick={() => {
+                      if (!newKeyText.trim() || !newValueText.trim()) return;
+                      setDictPairs([...dictPairs, { key: newKeyText.trim(), value: newValueText.trim() }]);
+                      setNewKeyText('');
+                      setNewValueText('');
+                    }}>
+                      <Plus size={16} /> Add Key-Value
+                    </button>
+                  </div>
+                  <div className="visual-dict-container">
+                    <strong>my_dict = &#123;</strong>
+                    <div className="dict-pairs-grid">
+                      {dictPairs.map((pair, idx) => (
+                        <div key={idx} className="dict-card-pair">
+                          <div className="key-part">🔑 <strong>"{pair.key}"</strong></div>
+                          <div className="arrow-part">➔</div>
+                          <div className="val-part">💬 "{pair.value}"</div>
+                        </div>
+                      ))}
+                    </div>
+                    <strong>&#125;</strong>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </section>
       </div>
     </div>
