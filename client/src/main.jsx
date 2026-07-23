@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   Brain,
   ChartNoAxesCombined,
@@ -23,7 +24,9 @@ import {
   Sparkles,
   Star,
   Trash2,
-  Trophy
+  Trophy,
+  Volume2,
+  Zap
 } from 'lucide-react';
 import './styles.css';
 
@@ -50,7 +53,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   
-  // View mode: 'dashboard' or 'storyQuest'
+  // Navigation State: 'dashboard' or 'storyQuest'
   const [viewMode, setViewMode] = useState('dashboard');
 
   const concepts = useMemo(() => [...new Set(scenarios.flatMap((scenario) => scenario.concepts || []))].sort(), [scenarios]);
@@ -94,8 +97,9 @@ function App() {
 
   if (loading) return <main className="loading">Loading PyBe...</main>;
 
+  // Render Dora's Interactive Story Quest Page
   if (viewMode === 'storyQuest') {
-    return <StoryQuestPage onBack={() => setViewMode('dashboard')} scenarios={scenarios} />;
+    return <DoraStoryQuestPage onBack={() => setViewMode('dashboard')} scenarios={scenarios} />;
   }
 
   return (
@@ -115,8 +119,8 @@ function App() {
           onClick={() => setViewMode('storyQuest')}
         >
           <Sparkles size={18} />
-          <span>Interactive Story Quest</span>
-          <small className="badge-new">Dora Page ✨</small>
+          <span>Dora Story Quest Page</span>
+          <small className="badge-new">SIMULATION ✨</small>
         </button>
 
         <label className="search">
@@ -242,390 +246,268 @@ function App() {
 }
 
 /**
- * 🎒 Brand New Cute Interactive Story Quest Page featuring Dora's Backpack
+ * 🎒 True Interactive Dora the Explorer Story Walkthrough Simulation
  */
-function StoryQuestPage({ onBack }) {
-  const storyList = [
+function DoraStoryQuestPage({ onBack }) {
+  // Quest Scenes Configuration
+  const questScenes = [
     {
-      id: 'dora_backpack',
-      title: "🎒 Dora the Explorer's Backpack Adventure",
-      category: 'Python List (Mastery)',
-      icon: '🎒',
-      image: '/images/dora_backpack.jpg',
-      moral: 'Dora puts items into her Backpack! A Python List stores items in order, allows appending, removing, indexing [0], and len() counting.',
-      dsType: 'dora'
+      step: 1,
+      title: 'Scene 1: The Adventure Begins with Dora & Boots!',
+      character: 'Dora & Boots',
+      avatar: '/images/dora_backpack.jpg',
+      dialogue: '¡Hola! I am Dora, and this is Boots! We are starting our journey to Star Mountain. First, we need to create our empty Backpack list in Python!',
+      conceptTitle: 'Create Backpack List',
+      conceptCode: 'backpack = []',
+      actionText: '🎒 Create Empty Backpack',
+      actionType: 'create'
     },
     {
-      id: 'alibaba_treasure',
-      title: 'Ali Baba & 40 Thieves: Secret Cave List',
-      category: 'Python List (Arrays)',
-      icon: '🗝️',
-      image: '/images/ali_baba.jpg',
-      moral: 'Order matters! Just like storing treasures sequentially inside a cave, a Python List keeps items in exact order.',
-      dsType: 'list',
-      initialItems: ['Gold Coins', 'Ruby Necklace', 'Diamond Crown']
+      step: 2,
+      title: 'Scene 2: Saying MAP! Adding Map to Backpack',
+      character: 'Boots the Monkey',
+      avatar: '/images/boots.jpg',
+      dialogue: 'Say MAP! Map tells us we need to cross Crocodile Lake. Let\'s put Map inside Backpack so we don\'t get lost!',
+      conceptTitle: 'Append Item to List',
+      conceptCode: 'backpack.append("Map")',
+      actionText: '🗺️ Put Map in Backpack',
+      actionType: 'addMap'
     },
     {
-      id: 'alibaba_passwords',
-      title: 'Ali Baba & The Secret Passwords',
-      category: 'Python Dictionary (Hash Maps)',
-      icon: '✨',
-      image: '/images/ali_baba.jpg',
-      moral: 'Instant lookup! Just like matching a secret door key to its password, a Dictionary maps Key ➔ Value.',
-      dsType: 'dict',
-      initialPairs: [
-        { key: 'Cave Door', value: 'Open Sesame' },
-        { key: 'Secret Vault', value: 'Khul Ja Sim Sim' }
-      ]
+      step: 3,
+      title: 'Scene 3: Finding the Golden Key on the Trail',
+      character: 'Dora the Explorer',
+      avatar: '/images/dora_backpack.jpg',
+      dialogue: 'Look! A Golden Key on the jungle trail! We\'ll need this key to unlock the Star Gate. Let\'s append it to our Backpack list!',
+      conceptTitle: 'Append Second Item',
+      conceptCode: 'backpack.append("Golden Key")',
+      actionText: '🔑 Put Golden Key in Backpack',
+      actionType: 'addKey'
     },
     {
-      id: 'thirsty_crow',
-      title: 'Panchatantra: The Thirsty Crow',
-      category: 'Python List (.append)',
-      icon: '🐦',
-      image: '/images/thirsty_crow.jpg',
-      moral: 'One by one! The crow adds pebbles using .append() to raise the water level dynamically.',
-      dsType: 'list',
-      initialItems: ['Red Pebble', 'Blue Pebble', 'Shiny Pebble']
+      step: 4,
+      title: 'Scene 4: Swiper Snuck a Broken Torch Inside!',
+      character: 'Swiper the Fox',
+      avatar: '/images/swiper.jpg',
+      dialogue: 'Oh no! Swiper sneaked a Broken Torch into our backpack! Quick, let's use .remove("Broken Torch") to clean up our list!',
+      conceptTitle: 'Remove Item from List',
+      conceptCode: 'backpack.remove("Broken Torch")',
+      actionText: '🧹 Remove Broken Torch',
+      actionType: 'removeTorch'
     },
     {
-      id: 'tortoise_hare',
-      title: 'Panchatantra: Tortoise & Hare Checkpoints',
-      category: 'Python List (Indexing)',
-      icon: '🐢',
-      image: '/images/tortoise_hare.jpg',
-      moral: 'Index 0 to Finish! Access any checkpoint instantly using Python list indexing [0] or [-1].',
-      dsType: 'list',
-      initialItems: ['Start Line', 'Big Banyan Tree', 'River Bridge', 'Finish Line']
+      step: 5,
+      title: 'Scene 5: Checking the First Item to Find Our Way',
+      character: 'Dora the Explorer',
+      avatar: '/images/dora_backpack.jpg',
+      dialogue: 'We reached Crocodile Lake! Which item is FIRST in our backpack list? In Python, indexing starts at 0! Index [0] gives us Map!',
+      conceptTitle: 'Access Index [0]',
+      conceptCode: 'first_item = backpack[0]',
+      actionText: '🔍 Inspect backpack[0]',
+      actionType: 'inspectFirst'
+    },
+    {
+      step: 6,
+      title: 'Scene 6: Reaching Star Mountain & Counting Items!',
+      character: 'Dora, Boots & Backpack',
+      avatar: '/images/dora_backpack.jpg',
+      dialogue: '¡Lo hicimos! We did it! We reached Star Mountain! Let\'s use len(backpack) to count how many items helped us on our quest!',
+      conceptTitle: 'Count Total Items with len()',
+      conceptCode: 'total = len(backpack)',
+      actionText: '🏆 Count Items len(backpack)',
+      actionType: 'finish'
     }
   ];
 
-  const [activeStory, setActiveStory] = useState(storyList[0]);
-
-  // Dora Backpack State
-  const [backpack, setBackpack] = useState(['Map', 'Golden Key', 'Broken Torch', 'Compass']);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [backpack, setBackpack] = useState([]);
   const [highlightFirst, setHighlightFirst] = useState(false);
-  const [customItem, setCustomItem] = useState('');
+  const [questCompleted, setQuestCompleted] = useState(false);
 
-  // Other List/Dict States
-  const [listItems, setListItems] = useState(activeStory.initialItems || []);
-  const [dictPairs, setDictPairs] = useState(activeStory.initialPairs || []);
-  const [newItemText, setNewItemText] = useState('');
-  const [newKeyText, setNewKeyText] = useState('');
-  const [newValueText, setNewValueText] = useState('');
+  const activeScene = questScenes[currentStep];
 
-  function selectStory(story) {
-    setActiveStory(story);
-    if (story.dsType === 'list') {
-      setListItems(story.initialItems || []);
-    } else if (story.dsType === 'dict') {
-      setDictPairs(story.initialPairs || []);
+  // Execute Step Action
+  function handleStepAction() {
+    const type = activeScene.actionType;
+
+    if (type === 'create') {
+      setBackpack([]);
+    } else if (type === 'addMap') {
+      if (!backpack.includes('Map')) setBackpack([...backpack, 'Map']);
+    } else if (type === 'addKey') {
+      if (!backpack.includes('Golden Key')) setBackpack([...backpack, 'Golden Key']);
+    } else if (type === 'removeTorch') {
+      setBackpack(backpack.filter((item) => item !== 'Broken Torch'));
+    } else if (type === 'inspectFirst') {
+      setHighlightFirst(true);
+      setTimeout(() => setHighlightFirst(false), 3000);
+    } else if (type === 'finish') {
+      setQuestCompleted(true);
+    }
+
+    if (currentStep < questScenes.length - 1) {
+      setCurrentStep(currentStep + 1);
     }
   }
 
-  // Dora Backpack Handlers
-  function createBackpack() {
+  // Helper to add Broken Torch in scene 4 for illustration
+  useEffect(() => {
+    if (activeScene.actionType === 'removeTorch' && !backpack.includes('Broken Torch')) {
+      setBackpack((prev) => [...prev, 'Broken Torch']);
+    }
+  }, [currentStep]);
+
+  function restartQuest() {
+    setCurrentStep(0);
     setBackpack([]);
+    setQuestCompleted(false);
     setHighlightFirst(false);
   }
 
-  function addMap() {
-    setBackpack([...backpack, 'Map']);
-  }
-
-  function addKey() {
-    setBackpack([...backpack, 'Golden Key']);
-  }
-
-  function addBrokenTorch() {
-    setBackpack([...backpack, 'Broken Torch']);
-  }
-
-  function addCustomItem() {
-    if (!customItem.trim()) return;
-    setBackpack([...backpack, customItem.trim()]);
-    setCustomItem('');
-  }
-
-  function removeBrokenTorch() {
-    setBackpack(backpack.filter((item) => item !== 'Broken Torch'));
-  }
-
-  function removeSpecificItem(idx) {
-    setBackpack(backpack.filter((_, i) => i !== idx));
-  }
-
-  function checkFirstItem() {
-    setHighlightFirst(true);
-    setTimeout(() => setHighlightFirst(false), 3000);
-  }
-
   return (
-    <div className="story-page-wrapper">
-      <header className="story-nav">
+    <div className="story-page-wrapper dora-theme-page">
+      {/* Top Cute Navbar */}
+      <header className="story-nav dora-nav">
         <button type="button" className="back-btn" onClick={onBack}>
           <ArrowLeft size={20} />
           <span>Back to Main Dashboard</span>
         </button>
         <div className="story-nav-title">
-          <BookOpen size={24} color="#ffd166" />
-          <h2>Story Quest: Dora's Backpack & Python Lists ✨</h2>
+          <span className="backpack-emoji">🎒</span>
+          <h2>Dora's Backpack Python List Simulation</h2>
         </div>
-        <div className="cute-badge">
-          <Star size={16} fill="#ffd166" color="#ffd166" />
-          <span>Dora's Adventure Page</span>
-        </div>
+        <button type="button" className="reset-quest-btn" onClick={restartQuest}>
+          <RotateCcw size={16} /> Restart Adventure
+        </button>
       </header>
 
-      <div className="story-content-grid">
-        {/* Story Selector Sidebar */}
-        <aside className="story-selector-sidebar">
-          <h3>🎒 Story Quest Collection</h3>
-          <div className="story-cards-stack">
-            {storyList.map((story) => (
-              <div
-                key={story.id}
-                className={activeStory.id === story.id ? 'story-card active' : 'story-card'}
-                onClick={() => selectStory(story)}
-              >
-                <img src={story.image} alt={story.title} className="story-thumbnail" />
-                <div className="story-card-info">
-                  <span className="story-cat-pill">{story.icon} {story.category}</span>
-                  <h4>{story.title}</h4>
-                </div>
-              </div>
-            ))}
+      {/* Quest Trail Progress Bar */}
+      <div className="quest-trail-bar">
+        {questScenes.map((scene, idx) => (
+          <div
+            key={scene.step}
+            className={`trail-step ${idx === currentStep ? 'active' : ''} ${idx < currentStep ? 'completed' : ''}`}
+            onClick={() => setCurrentStep(idx)}
+          >
+            <span className="step-num">{idx < currentStep ? '✓' : scene.step}</span>
+            <span className="step-label">Step {scene.step}</span>
           </div>
-        </aside>
+        ))}
+      </div>
 
-        {/* Interactive Viewer */}
-        <section className="story-interactive-viewer">
-          <div className="story-hero-banner">
-            <img src={activeStory.image} alt={activeStory.title} className="story-hero-img" />
-            <div className="story-banner-overlay">
-              <span className="cute-hero-pill">{activeStory.category}</span>
-              <h1>{activeStory.title}</h1>
-              <p className="moral-quote">💡 <strong>Learning Focus:</strong> {activeStory.moral}</p>
+      {/* Interactive Story Simulation Grid */}
+      <div className="dora-simulation-main">
+        {/* Left Side: Interactive Character Dialogue & Story Scene */}
+        <section className="dora-story-stage">
+          <div className="stage-scene-card">
+            <div className="character-avatar-wrap">
+              <img src={activeScene.avatar} alt={activeScene.character} className="character-avatar-img" />
+              <span className="char-name-tag">{activeScene.character}</span>
+            </div>
+
+            <div className="dialogue-speech-bubble">
+              <div className="bubble-header">
+                <Volume2 size={18} color="#ffd166" />
+                <strong>{activeScene.title}</strong>
+              </div>
+              <p className="dialogue-text">"{activeScene.dialogue}"</p>
             </div>
           </div>
 
-          {/* DORA'S BACKPACK SPECIAL SIMULATOR */}
-          {activeStory.dsType === 'dora' ? (
-            <div className="dora-simulator-panel">
-              <div className="simulator-header">
-                <Package size={24} color="#ffd166" />
-                <h3>🎒 Dora's Backpack Interactive Python List Simulator</h3>
-              </div>
+          {/* Interactive Quest Action Button */}
+          <div className="quest-action-box">
+            <button type="button" className="hero-action-btn" onClick={handleStepAction}>
+              <Zap size={20} /> {activeScene.actionText}
+            </button>
+            <p className="action-hint">Click button above to advance the story and run the Python code!</p>
+          </div>
 
-              {/* Action Buttons Bar */}
-              <div className="dora-actions-grid">
-                <button type="button" className="dora-btn reset-btn" onClick={createBackpack}>
-                  <RotateCcw size={16} /> 1. Create Empty Backpack (backpack = [])
-                </button>
-                <button type="button" className="dora-btn map-btn" onClick={addMap}>
-                  <Map size={16} /> 2. Add Map (.append("Map"))
-                </button>
-                <button type="button" className="dora-btn key-btn" onClick={addKey}>
-                  <Key size={16} /> 3. Add Golden Key (.append("Golden Key"))
-                </button>
-                <button type="button" className="dora-btn torch-btn" onClick={addBrokenTorch}>
-                  <Plus size={16} /> Add Broken Torch
-                </button>
-                <button type="button" className="dora-btn remove-btn" onClick={removeBrokenTorch}>
-                  <Trash2 size={16} /> 4. Remove Broken Torch (.remove("Broken Torch"))
-                </button>
-                <button type="button" className="dora-btn inspect-btn" onClick={checkFirstItem}>
-                  <Sparkles size={16} /> 5. Check First Item (backpack[0])
-                </button>
-              </div>
+          {/* Python Concept Card for Current Scene */}
+          <div className="scene-concept-banner">
+            <div className="concept-title">
+              <Code2 size={20} color="#06d6a0" />
+              <h3>{activeScene.conceptTitle}</h3>
+            </div>
+            <code className="highlight-code">{activeScene.conceptCode}</code>
+          </div>
+        </section>
 
-              {/* Custom Add Row */}
-              <div className="dora-custom-input">
-                <input
-                  type="text"
-                  value={customItem}
-                  onChange={(e) => setCustomItem(e.target.value)}
-                  placeholder="Put any new item into Backpack (e.g. Telescope, Banana)..."
-                />
-                <button type="button" className="dora-add-custom-btn" onClick={addCustomItem}>
-                  <Plus size={16} /> Put in Backpack
-                </button>
-              </div>
-
-              {/* Cute Visual Backpack Display */}
-              <div className="backpack-visual-box">
-                <div className="backpack-visual-header">
-                  <div className="backpack-icon-title">
-                    <span className="big-backpack-emoji">🎒</span>
-                    <div>
-                      <strong>Dora's Backpack Contents</strong>
-                      <span>Python List View</span>
-                    </div>
-                  </div>
-                  <div className="backpack-count-badge">
-                    <span className="count-num">{backpack.length}</span>
-                    <small>Items (len(backpack))</small>
-                  </div>
-                </div>
-
-                <div className="backpack-items-flex">
-                  {backpack.length === 0 ? (
-                    <p className="empty-backpack-msg">Backpack is empty! Click the buttons above to add items.</p>
-                  ) : (
-                    backpack.map((item, idx) => (
-                      <div 
-                        key={idx} 
-                        className={idx === 0 && highlightFirst ? 'backpack-item-chip highlighted' : 'backpack-item-chip'}
-                      >
-                        <span className="chip-index">Index [{idx}]</span>
-                        <span className="chip-name">{item}</span>
-                        <button type="button" className="chip-del" onClick={() => removeSpecificItem(idx)}>
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    ))
-                  )}
+        {/* Right Side: Animated Backpack Visualizer & Code Terminal */}
+        <section className="dora-backpack-visualizer">
+          {/* Animated Backpack Container */}
+          <div className="backpack-container-card">
+            <div className="backpack-card-header">
+              <div className="backpack-title">
+                <span className="big-backpack-icon">🎒</span>
+                <div>
+                  <h3>Dora's Backpack Contents</h3>
+                  <small>Python List Representation: <code>backpack</code></small>
                 </div>
               </div>
-
-              {/* Live Generated Python Code Box */}
-              <div className="python-code-box">
-                <div className="code-header">
-                  <Code2 size={18} color="#06d6a0" />
-                  <strong>Live Python Code Execution</strong>
-                </div>
-                <pre>
-{`# 1. Create Dora's Backpack list
-backpack = [${backpack.map(i => `"${i}"`).join(', ')}]
-
-# 2. Count total items inside backpack
-total_items = len(backpack)  # Returns ${backpack.length}
-
-# 3. Check the first item in backpack
-first_item = backpack[0] if backpack else None  # Returns "${backpack[0] || 'None'}"
-
-# 4. Display all items
-print("Dora's Backpack:", backpack)`}
-                </pre>
-              </div>
-
-              {/* Educational Python Concepts Cards */}
-              <div className="python-concepts-cards-grid">
-                <div className="concept-card">
-                  <span className="card-num">1</span>
-                  <h4>Create Backpack</h4>
-                  <code>backpack = []</code>
-                  <p>Creates a brand new empty list to hold items in order.</p>
-                </div>
-                <div className="concept-card">
-                  <span className="card-num">2</span>
-                  <h4>Add Items (.append)</h4>
-                  <code>backpack.append("Map")</code>
-                  <p>Puts a new item at the very end of the list.</p>
-                </div>
-                <div className="concept-card">
-                  <span className="card-num">3</span>
-                  <h4>Remove Items (.remove)</h4>
-                  <code>backpack.remove("Broken Torch")</code>
-                  <p>Finds and removes a specific unwanted item from the list.</p>
-                </div>
-                <div className="concept-card">
-                  <span className="card-num">4</span>
-                  <h4>Check First Item ([0])</h4>
-                  <code>first = backpack[0]</code>
-                  <p>In Python, indexing starts at 0! Index [0] accesses the first item.</p>
-                </div>
-                <div className="concept-card">
-                  <span className="card-num">5</span>
-                  <h4>Count Items (len)</h4>
-                  <code>count = len(backpack)</code>
-                  <p>Counts how many total items are stored inside the backpack.</p>
-                </div>
+              <div className="len-badge">
+                <strong>len(backpack) = {backpack.length}</strong>
               </div>
             </div>
-          ) : (
-            /* General List/Dict Simulator for other stories */
-            <div className="ds-simulator-panel">
-              <div className="simulator-header">
-                <Sparkles size={20} color="#ffd166" />
-                <h3>Interactive Python {activeStory.dsType === 'list' ? 'List' : 'Dictionary'} Builder</h3>
-              </div>
 
-              {activeStory.dsType === 'list' ? (
-                <div className="list-simulator">
-                  <div className="input-row">
-                    <input
-                      type="text"
-                      value={newItemText}
-                      onChange={(e) => setNewItemText(e.target.value)}
-                      placeholder="Add new item to list..."
-                    />
-                    <button type="button" className="add-btn" onClick={() => {
-                      if (!newItemText.trim()) return;
-                      setListItems([...listItems, newItemText.trim()]);
-                      setNewItemText('');
-                    }}>
-                      <Plus size={16} /> Append
-                    </button>
+            <div className="backpack-list-display">
+              <div className="code-syntax-bracket">backpack = [</div>
+              <div className="items-chip-grid">
+                {backpack.length === 0 ? (
+                  <div className="empty-backpack-notice">
+                    🎒 Backpack is empty! <code>backpack = []</code>
                   </div>
-                  <div className="visual-list-container">
-                    <strong>my_list = [</strong>
-                    <div className="list-items-row">
-                      {listItems.map((item, idx) => (
-                        <div key={idx} className="list-box-item">
-                          <span className="idx-badge">Index [{idx}]</span>
-                          <span className="item-val">"{item}"</span>
-                        </div>
-                      ))}
+                ) : (
+                  backpack.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`backpack-chip ${idx === 0 && highlightFirst ? 'highlight-first' : ''}`}
+                    >
+                      <span className="idx-tag">Index [{idx}]</span>
+                      <strong className="item-name">"{item}"</strong>
                     </div>
-                    <strong>]</strong>
-                  </div>
-                </div>
-              ) : (
-                <div className="dict-simulator">
-                  <div className="input-row">
-                    <input
-                      type="text"
-                      value={newKeyText}
-                      onChange={(e) => setNewKeyText(e.target.value)}
-                      placeholder="Key (e.g. Door)"
-                    />
-                    <input
-                      type="text"
-                      value={newValueText}
-                      onChange={(e) => setNewValueText(e.target.value)}
-                      placeholder="Value (e.g. Password)"
-                    />
-                    <button type="button" className="add-btn" onClick={() => {
-                      if (!newKeyText.trim() || !newValueText.trim()) return;
-                      setDictPairs([...dictPairs, { key: newKeyText.trim(), value: newValueText.trim() }]);
-                      setNewKeyText('');
-                      setNewValueText('');
-                    }}>
-                      <Plus size={16} /> Add Key-Value
-                    </button>
-                  </div>
-                  <div className="visual-dict-container">
-                    <strong>my_dict = &#123;</strong>
-                    <div className="dict-pairs-grid">
-                      {dictPairs.map((pair, idx) => (
-                        <div key={idx} className="dict-card-pair">
-                          <div className="key-part">🔑 <strong>"{pair.key}"</strong></div>
-                          <div className="arrow-part">➔</div>
-                          <div className="val-part">💬 "{pair.value}"</div>
-                        </div>
-                      ))}
-                    </div>
-                    <strong>&#125;</strong>
-                  </div>
-                </div>
-              )}
+                  ))
+                )}
+              </div>
+              <div className="code-syntax-bracket">]</div>
+            </div>
+          </div>
+
+          {/* Real-time Python Code Execution Terminal */}
+          <div className="python-execution-terminal">
+            <div className="terminal-bar">
+              <TerminalIcon size={16} color="#a3e635" />
+              <span>Python Execution Terminal</span>
+            </div>
+            <pre className="terminal-code">
+{`# Python List Execution Trace
+backpack = [${backpack.map((i) => `"${i}"`).join(', ')}]
+
+# Current Operations:
+# Total items: len(backpack) -> ${backpack.length}
+# First item: backpack[0] -> "${backpack[0] || 'None'}"
+
+print("Dora's Backpack Contents:", backpack)`}
+            </pre>
+          </div>
+
+          {/* Victory Card */}
+          {questCompleted && (
+            <div className="victory-celebration-card">
+              <Trophy size={36} color="#ffd166" />
+              <div>
+                <h3>¡Lo Hicimos! We Did It!</h3>
+                <p>You mastered Python Lists with Dora's Backpack! 🎒⭐</p>
+              </div>
             </div>
           )}
         </section>
       </div>
     </div>
   );
+}
+
+function TerminalIcon({ size, color }) {
+  return <Code2 size={size} color={color} />;
 }
 
 function EmptyResult() {
