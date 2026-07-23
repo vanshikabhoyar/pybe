@@ -491,3 +491,84 @@ meter {
     grid-template-columns: 1fr;
   }
 }
+
+.logs-panel {
+  grid-column: 1 / -1;
+}
+
+.logs-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logs-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.log-badge {
+  background: #e7f2cb;
+  color: #14201c;
+  border: 1px solid #c9dc94;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #24342f;
+  color: #f8f4ec;
+  border: 1px solid #385149;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.secondary-btn:hover {
+  background: #2e443e;
+}
+
+.secondary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.danger-btn {
+  background: #7f1d1d;
+  border-color: #991b1b;
+  color: #fecaca;
+}
+
+.danger-btn:hover {
+  background: #991b1b;
+}
+
+.logs-terminal {
+  background: #0f1715;
+  color: #a3e635;
+  border-radius: 8px;
+  padding: 16px;
+  max-height: 320px;
+  overflow: auto;
+  border: 1px solid #20312c;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.logs-terminal pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
